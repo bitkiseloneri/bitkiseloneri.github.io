@@ -3,73 +3,60 @@
     {
         "id": 1,
         "diseaseId": 1,
-        "plantId": 2,
-        "traditionalUse": "Ihlamur çiçekleri, geleneksel bitkisel kullanımda soğuk algınlığı dönemlerinde sıcak içecek olarak tercih edilmektedir. Bu kullanımın öksürüğü tedavi ettiği kesin olarak gösterilmiş değildir.",
-        "method": "Ihlamur çiçeklerinin sıcak suyla demlenmesi, geleneksel hazırlama yöntemlerinden biridir. Hazırlama koşulları ve miktar için güvenilir bir bitkisel monograf incelenmelidir.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Geleneksel kullanım bilgisi, öksürük üzerindeki klinik etkinliğin kanıtlandığı anlamına gelmez. Bu şikâyet için yeterli klinik kanıt bulunduğu varsayılmamalıdır.",
-        "warnings": "Ihlamura veya benzer bitkilere karşı hassasiyeti olanlar dikkatli olmalıdır. Şiddetli veya uzun süren öksürükte sağlık uzmanına başvurulmalıdır.",
-        "sources": []
+        "title": "Zencefil, Nane ve Ihlamur Karışımı",
+        "type": "Bitkisel karışım",
+        "plantIds": [4, 3, 2],
+        "ingredients": [
+            {
+                "plantId": 4,
+                "name": "Zencefil",
+                "amount": ""
+            },
+            {
+                "plantId": 3,
+                "name": "Nane",
+                "amount": ""
+            },
+            {
+                "plantId": 2,
+                "name": "Ihlamur",
+                "amount": ""
+            }
+        ],
+        "method": "Bu tarif için henüz güvenilir kaynaklarla doğrulanmış bir hazırlama yöntemi eklenmemiştir.",
+        "steps": [],
+        "traditionalUse": "Bu bitkilerin geleneksel kullanımları ayrı ayrı incelenmelidir. Birlikte kullanılmalarının öksürüğe iyi geldiği varsayılmamalıdır.",
+        "evidence": "Bu karışımın öksürük üzerindeki etkisini doğrulayan yeterli klinik kanıt henüz eklenmemiştir.",
+        "warnings": [
+            "Bitkilere karşı alerjisi olan kişiler dikkatli olmalıdır.",
+            "Nane bazı kişilerde reflü şikâyetlerini artırabilir.",
+            "Düzenli ilaç kullananlar sağlık uzmanına danışmalıdır."
+        ],
+        "sources": [],
+        "verified": false
     },
     {
         "id": 2,
         "diseaseId": 1,
-        "plantId": 4,
-        "traditionalUse": "Zencefil, geleneksel olarak çeşitli sıcak içeceklerde kullanılan bir bitkidir. Öksürük üzerindeki etkisi kesinleşmiş bir tedavi olarak değerlendirilmemelidir.",
-        "method": "Zencefilin rizomu gıda ve içecek hazırlamada kullanılabilir. Tıbbi amaçlı hazırlama ve miktar bilgileri doğrulanmış kaynaklara göre ayrıca değerlendirilmelidir.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Zencefil üzerine farklı sağlık alanlarında araştırmalar bulunmakla birlikte bu araştırmalar öksürüğün tedavi edildiğini kanıtlamaz.",
-        "warnings": "Zencefil bazı kişilerde mide rahatsızlığına neden olabilir. Kan sulandırıcı ilaç kullananlar ve düzenli ilaç kullananlar sağlık uzmanına danışmalıdır.",
-        "sources": []
-    },
-    {
-        "id": 3,
-        "diseaseId": 2,
-        "plantId": 1,
-        "traditionalUse": "Papatya, geleneksel bitkisel kullanımda ağız ve boğaz bölgesiyle ilgili bazı uygulamalarda yer alır. Boğaz ağrısını tedavi ettiği kesin değildir.",
-        "method": "Papatyanın geleneksel hazırlama yöntemleri arasında demleme ve uygun ürünlerle hazırlanan ağız çalkalama uygulamaları bulunur. Uygulama biçimi ürünün niteliğine göre değerlendirilmelidir.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Boğaz ağrısına yönelik klinik etkinliği hakkında kesin bir tedavi sonucu çıkarılamaz.",
-        "warnings": "Papatyagiller familyasına alerjisi olan kişilerde alerjik reaksiyon görülebilir. Hazırlanan ürünlerin yutulması veya uygulanması konusunda sağlık uzmanına danışılmalıdır.",
-        "sources": []
-    },
-    {
-        "id": 4,
-        "diseaseId": 3,
-        "plantId": 5,
-        "traditionalUse": "Melisa yaprakları geleneksel bitkisel kullanımda hafif stres ve uykuya yardımcı olma amacıyla değerlendirilmektedir. Etkinliği kişiden kişiye değişebilir.",
-        "method": "Melisa yaprakları geleneksel olarak sıcak suyla demlenerek hazırlanır. Tıbbi kullanım miktarı ve süresi için doğrulanmış monograf bilgisi gereklidir.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Melisa üzerine sınırlı araştırmalar bulunmaktadır. Bu araştırmalar her uyku sorunu için etkili olduğunu göstermez.",
-        "warnings": "Uyku hâlini artırabilecek ilaçlarla birlikte kullanımı konusunda dikkatli olunmalıdır. Sürekli uykusuzluk yaşayanlar sağlık uzmanına başvurmalıdır.",
-        "sources": []
-    },
-    {
-        "id": 5,
-        "diseaseId": 4,
-        "plantId": 3,
-        "traditionalUse": "Nane, geleneksel olarak sindirim sistemiyle ilgili bazı şikâyetlerde kullanılan aromatik bir bitkidir. Nane yaprağı ile nane yağının kullanımı aynı değildir.",
-        "method": "Nane yaprakları gıda veya içecek olarak kullanılabilir. Nane yağı gibi yoğun ürünlerin kullanımı ayrı güvenlik değerlendirmesi gerektirir.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Nane yaprağına ilişkin geleneksel kullanım bilgileri, nane yağının belirli sindirim sorunlarındaki araştırma sonuçlarıyla karıştırılmamalıdır.",
-        "warnings": "Nane ve özellikle nane yağı bazı kişilerde reflü yakınmalarını artırabilir. Yoğun nane yağı ürünleri gelişigüzel tüketilmemelidir.",
-        "sources": []
-    },
-    {
-        "id": 6,
-        "diseaseId": 6,
-        "plantId": 6,
-        "traditionalUse": "Rezene meyveleri geleneksel olarak sindirim sistemiyle ilişkili gaz ve şişkinlik şikâyetlerinde kullanılmaktadır.",
-        "method": "Rezene meyveleri geleneksel olarak ezilerek veya bütün hâlde sıcak suyla demlenebilir. Tıbbi kullanım koşulları ürün türüne ve güvenilir monografa göre doğrulanmalıdır.",
-        "quantity": "",
-        "frequency": "",
-        "evidence": "Geleneksel kullanım bilgisi, her türlü şişkinlik nedeninde klinik etkinliğin kanıtlandığı anlamına gelmez.",
-        "warnings": "Rezene bazı bitkilere alerjisi olan kişilerde reaksiyon oluşturabilir. Hamilelik, emzirme ve çocuklarda kullanım için sağlık uzmanına danışılmalıdır.",
-        "sources": []
+        "title": "Ihlamur Kullanımı",
+        "type": "Tek bitkili geleneksel kullanım",
+        "plantIds": [2],
+        "ingredients": [
+            {
+                "plantId": 2,
+                "name": "Ihlamur",
+                "amount": ""
+            }
+        ],
+        "method": "Hazırlama yöntemi güvenilir kaynaklarla doğrulandıktan sonra eklenecektir.",
+        "steps": [],
+        "traditionalUse": "Ihlamur, geleneksel olarak sıcak içecek şeklinde tüketilen bitkiler arasındadır.",
+        "evidence": "Bu kullanımın öksürüğü tedavi ettiği sonucuna varmak için yeterli kanıt sunulmamıştır.",
+        "warnings": [
+            "Alerjik reaksiyon ihtimali dikkate alınmalıdır.",
+            "Uzun süren veya şiddetli öksürükte sağlık uzmanına başvurulmalıdır."
+        ],
+        "sources": [],
+        "verified": false
     }
 ]
