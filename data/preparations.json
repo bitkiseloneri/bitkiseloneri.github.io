@@ -1,48 +1,87 @@
 
 [
   {
-    "preparation_id": "PR001",
-    "plant_id": "P001",
-    "method_name": "Yemeklerde kullanım",
-    "method_type": "Yemek",
-    "title": "Taze zencefilin yemeklerde kullanımı",
+    "preparation_id": "prep_ginger_infusion",
+    "plant_id": "plant_ginger",
+    "method_name": "Demleme",
+    "title": "Zencefil Demlemesi",
+    "intended_use": "Zencefilin gıda olarak hazırlanmasına yönelik geleneksel bir yöntemdir. Herhangi bir hastalığın tedavisi olarak değerlendirilmemelidir.",
     "ingredients": [
       {
         "name": "Taze zencefil",
-        "amount": "Tarife göre"
+        "amount": "İsteğe bağlı küçük bir parça"
+      },
+      {
+        "name": "İçme suyu",
+        "amount": "1 fincan"
       }
     ],
     "steps": [
-      "Zencefili yıkayın.",
-      "İsteğe bağlı olarak kabuğunu soyun.",
-      "İnce dilimleyin veya rendeleyin.",
-      "Tarife uygun şekilde yemeğe ekleyin."
+      "Zencefili temiz suyla yıkayın.",
+      "İnce dilimler hâlinde kesin.",
+      "Sıcak suya ekleyin.",
+      "Bir süre beklettikten sonra süzün."
     ],
-    "intended_use": "Yemeklerde kullanım; hastalık tedavisi önerisi değildir.",
     "dosage": null,
     "duration": null,
     "safety_notes": [
-      "Yemeklerde kullanım, hastalıkları tedavi ettiğini kanıtlamaz."
+      "Bu tarif tıbbi doz önerisi değildir.",
+      "Zencefil bazı kişilerde mide yanması ve rahatsızlık oluşturabilir.",
+      "Düzenli ilaç kullanan kişiler takviye amaçlı kullanım konusunda sağlık uzmanına danışmalıdır."
     ],
-    "source_ids": []
+    "keywords": [
+      "zencefil çayı",
+      "zencefil demleme",
+      "zencefil hazırlama",
+      "bitki çayı",
+      "demleme yöntemi"
+    ],
+    "sources": [
+      {
+        "title": "Baytop, T. (1999). Türkiye'de Bitkiler ile Tedavi. Nobel Tıp Kitabevleri."
+      }
+    ]
   },
   {
-    "preparation_id": "PR002",
-    "plant_id": "P002",
-    "method_name": "Bitki infüzyonu",
-    "method_type": "Demleme",
-    "title": "Papatya için hazırlama bilgisi",
-    "ingredients": [],
-    "steps": [
-      "Bitki türünün doğru tanımlandığından emin olun.",
-      "Hazırlama yöntemi için güvenilir ve uzman incelemesinden geçmiş bir kaynağa başvurun."
+    "preparation_id": "prep_mint_infusion",
+    "plant_id": "plant_mint",
+    "method_name": "Demleme",
+    "title": "Nane Demlemesi",
+    "intended_use": "Nane yapraklarının içecek olarak hazırlanmasına yönelik geleneksel bir yöntemdir.",
+    "ingredients": [
+      {
+        "name": "Taze veya kurutulmuş nane yaprağı",
+        "amount": "İsteğe bağlı"
+      },
+      {
+        "name": "İçme suyu",
+        "amount": "1 fincan"
+      }
     ],
-    "intended_use": "Bilgilendirme amaçlı hazırlama kaydı.",
+    "steps": [
+      "Nane yapraklarını temizleyin.",
+      "Yaprakları bir fincana yerleştirin.",
+      "Sıcak suyu yaprakların üzerine ekleyin.",
+      "Bir süre beklettikten sonra süzün."
+    ],
     "dosage": null,
     "duration": null,
     "safety_notes": [
-      "Bitkisel ürünler herkes için uygun olmayabilir."
+      "Bu tarif tıbbi doz önerisi değildir.",
+      "Nane bazı kişilerde reflü ve mide yanmasını artırabilir.",
+      "Nane yağı ile nane yaprağı aynı şekilde değerlendirilmemelidir."
     ],
-    "source_ids": []
+    "keywords": [
+      "nane çayı",
+      "nane demleme",
+      "nane yaprağı",
+      "bitki çayı",
+      "nane hazırlama"
+    ],
+    "sources": [
+      {
+        "title": "Baytop, T. (1999). Türkiye'de Bitkiler ile Tedavi. Nobel Tıp Kitabevleri."
+      }
+    ]
   }
 ]
