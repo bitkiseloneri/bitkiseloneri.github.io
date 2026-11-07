@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let preparations = [];
     let categories = [];
 
-    // Türkçe karakterleri arama için standartlaştırır.
+    // Türkçe karakter uyumlu arama
     function normalizeText(value) {
         return String(value || "")
             .toLocaleLowerCase("tr-TR")
@@ -24,81 +24,86 @@ document.addEventListener("DOMContentLoaded", () => {
             .trim();
     }
 
-    // HTML içeriklerinde güvenli metin gösterimi.
+    // HTML güvenliği
     function escapeHTML(value) {
-        return String(value ?? "").replace(/[&<>"']/g, character => ({
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
             "&": "&amp;",
             "<": "&lt;",
             ">": "&gt;",
             '"': "&quot;",
             "'": "&#039;"
-        })[character]);
+        })[char]);
     }
 
-    // JSON dosyalarını yükler.
+    // Kaynak bağlantılarında yalnızca HTTP/HTTPS kabul edilir.
+    function safeUrl(value) {
+        try {
+            const url = new URL(value);
+            return ["http:", "https:"].includes(url.protocol)
+                ? escapeHTML(url.href)
+                : "";
+        } catch {
+            return "";
+        }
+    }
+
+    // Verileri yükle
     async function loadData() {
         try {
-            const files = await Promise.all([
-                fetch("data/diseases.json"),
-                fetch("data/plants.json"),
-                fetch("data/preparations.json"),
-                fetch("data/categories.json")
-            ]);
+            const paths = [
+                "data/diseases.json",
+                "data/plants.json",
+                "data/preparations.json",
+                "data/categories.json"
+            ];
 
-            if (files.some(response => !response.ok)) {
-                throw new Error("Veri dosyalarından biri yüklenemedi.");
+            const responses = await Promise.all(
+                paths.map(path => fetch(path))
+            );
+
+            if (responses.some(response => !response.ok)) {
+                throw new Error("JSON dosyaları yüklenemedi.");
             }
 
             const data = await Promise.all(
-                files.map(response => response.json())
+                responses.map(response => response.json())
             );
 
-            diseases = Array.isArray(data[0]) ? data[0] : [];
-            plants = Array.isArray(data[1]) ? data[1] : [];
-            preparations = Array.isArray(data[2]) ? data[2] : [];
-            categories = Array.isArray(data[3]) ? data[3] : [];
+            [diseases, plants, preparations, categories] = data;
 
             renderDiseases(diseases);
 
         } catch (error) {
-            console.error("Veri yükleme hatası:", error);
+            console.error(error);
 
             diseaseList.innerHTML = `
                 <p class="loading-message">
-                    Bilgiler yüklenemedi. Lütfen sayfayı yenileyin.
+                    Veriler yüklenemedi. Dosya yollarını ve JSON biçimini kontrol edin.
                 </p>
             `;
         }
     }
 
-    // Kategori adını bulur.
+    // Kategori adı
     function getCategoryName(categoryId) {
         const category = categories.find(item =>
             String(item.id) === String(categoryId)
         );
 
-        return category ? category.name : "Genel";
+        return category?.name || "Genel";
     }
 
-    // Şikâyet kartlarını oluşturur.
+    // Hastalık kartları
     function renderDiseases(items) {
         diseaseList.innerHTML = "";
-        noResults.classList.add("hidden");
-
-        if (items.length === 0) {
-            noResults.classList.remove("hidden");
-            return;
-        }
+        noResults.classList.toggle("hidden", items.length > 0);
 
         items.forEach(disease => {
             const card = document.createElement("article");
+
             card.className = "disease-card";
             card.tabIndex = 0;
             card.setAttribute("role", "button");
-            card.setAttribute(
-                "aria-label",
-                `${disease.name} detaylarını görüntüle`
-            );
 
             card.innerHTML = `
                 <span class="card-category">
@@ -110,7 +115,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>${escapeHTML(disease.description)}</p>
 
                 <span class="card-link">
-                    Bitkileri incele →
+                    Bitkileri ve tarifleri incele →
                 </span>
             `;
 
@@ -129,9 +134,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Arama işlemi.
+    // Arama
     function searchDiseases() {
         const query = normalizeText(searchInput.value);
+
+        diseaseDetail.classList.add("hidden");
+        resultsSection.classList.remove("hidden");
 
         if (!query) {
             renderDiseases(diseases);
@@ -139,21 +147,225 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const results = diseases.filter(disease => {
-            const searchableText = normalizeText([
+            const content = normalizeText([
                 disease.name,
                 disease.description,
                 ...(disease.keywords || []),
                 getCategoryName(disease.categoryId)
             ].join(" "));
 
-            return searchableText.includes(query);
+            return content.includes(query);
         });
 
         renderDiseases(results);
         resultsSection.scrollIntoView({ behavior: "smooth" });
     }
 
-    // Bir şikâyete bağlı bitkileri ve hazırlanışları gösterir.
+    // Hastalığa bağlı tarifleri bul
+    function getDiseasePreparations(diseaseId) {
+        return preparations.filter(item =>
+            String(item.diseaseId) === String(diseaseId)
+        );
+    }
+
+    // Bitki kartı
+    function createPlantCard(plant) {
+        const imagePath = plant.image
+            ? escapeHTML(plant.image)
+            : "";
+
+        return `
+            <article class="plant-card">
+                ${
+                    imagePath
+                        ? `
+                            <img
+                                class="plant-image"
+                                src="${imagePath}"
+                                alt="${escapeHTML(plant.name)}"
+                                loading="lazy"
+                                onerror="this.style.display='none'"
+                            >
+                        `
+                        : ""
+                }
+
+                <div class="plant-card-content">
+                    <h3>${escapeHTML(plant.name)}</h3>
+
+                    ${
+                        plant.scientificName
+                            ? `
+                                <p class="scientific-name">
+                                    ${escapeHTML(plant.scientificName)}
+                                </p>
+                            `
+                            : ""
+                    }
+
+                    <p>${escapeHTML(plant.description || "")}</p>
+                </div>
+            </article>
+        `;
+    }
+
+    // Tarif kartı
+    function createPreparationCard(preparation, index) {
+        const ingredients = preparation.ingredients || [];
+        const warnings = preparation.warnings || [];
+        const steps = preparation.steps || [];
+        const sources = preparation.sources || [];
+
+        const ingredientHTML = ingredients.map(ingredient => {
+            const plant = plants.find(item =>
+                String(item.id) === String(ingredient.plantId)
+            );
+
+            const name = plant?.name || ingredient.name || "Bilinmeyen bitki";
+
+            return `
+                <li>
+                    <strong>${escapeHTML(name)}</strong>
+                    ${
+                        ingredient.amount
+                            ? ` — ${escapeHTML(ingredient.amount)}`
+                            : ""
+                    }
+                </li>
+            `;
+        }).join("");
+
+        const stepHTML = steps.length
+            ? `
+                <ol class="preparation-steps">
+                    ${steps.map(step => `<li>${escapeHTML(step)}</li>`).join("")}
+                </ol>
+            `
+            : `
+                <p class="empty-information">
+                    Hazırlama aşamaları henüz doğrulanarak eklenmemiştir.
+                </p>
+            `;
+
+        const warningHTML = warnings.length
+            ? `
+                <ul>
+                    ${warnings.map(warning => `<li>${escapeHTML(warning)}</li>`).join("")}
+                </ul>
+            `
+            : `<p>Bu tarif için özel güvenlik bilgileri henüz eklenmemiştir.</p>`;
+
+        const sourceHTML = sources.length
+            ? `
+                <ul class="source-list">
+                    ${sources.map(source => {
+                        const url = safeUrl(source.url);
+
+                        return `
+                            <li>
+                                ${
+                                    url
+                                        ? `<a href="${url}" target="_blank" rel="noopener noreferrer">
+                                            ${escapeHTML(source.title)}
+                                           </a>`
+                                        : escapeHTML(source.title || "Kaynak")
+                                }
+                            </li>
+                        `;
+                    }).join("")}
+                </ul>
+            `
+            : `<p>Bu tarif için henüz kaynak eklenmemiştir.</p>`;
+
+        return `
+            <article class="recipe-card">
+
+                <div class="recipe-header">
+                    <span class="recipe-number">TARİF ${index + 1}</span>
+
+                    <span class="recipe-type">
+                        ${escapeHTML(preparation.type || "Bitkisel kullanım")}
+                    </span>
+                </div>
+
+                <h3>${escapeHTML(preparation.title)}</h3>
+
+                <div class="recipe-section">
+                    <h4>🌿 Gerekli bitkiler</h4>
+                    <ul class="ingredient-list">
+                        ${ingredientHTML || "<li>Malzeme eklenmemiş.</li>"}
+                    </ul>
+                </div>
+
+                <div class="recipe-section">
+                    <h4>🫖 Hazırlanışı</h4>
+                    ${stepHTML}
+                    ${
+                        preparation.method
+                            ? `<p>${escapeHTML(preparation.method)}</p>`
+                            : ""
+                    }
+                </div>
+
+                ${
+                    preparation.traditionalUse
+                        ? `
+                            <div class="recipe-section">
+                                <h4>Geleneksel kullanım</h4>
+                                <p>${escapeHTML(preparation.traditionalUse)}</p>
+                            </div>
+                        `
+                        : ""
+                }
+
+                ${
+                    preparation.quantity || preparation.frequency
+                        ? `
+                            <div class="recipe-section">
+                                <h4>Kullanım bilgileri</h4>
+                                ${
+                                    preparation.quantity
+                                        ? `<p><strong>Miktar:</strong> ${escapeHTML(preparation.quantity)}</p>`
+                                        : ""
+                                }
+                                ${
+                                    preparation.frequency
+                                        ? `<p><strong>Sıklık:</strong> ${escapeHTML(preparation.frequency)}</p>`
+                                        : ""
+                                }
+                            </div>
+                        `
+                        : ""
+                }
+
+                <div class="recipe-section">
+                    <h4>Bilimsel kanıt durumu</h4>
+                    <p>${escapeHTML(
+                        preparation.evidence || "Bu tarif için bilimsel kanıt bilgisi henüz değerlendirilmemiştir."
+                    )}</p>
+                </div>
+
+                <div class="recipe-section warning-box">
+                    <h4>⚠ Güvenlik uyarıları</h4>
+                    ${warningHTML}
+                </div>
+
+                <div class="recipe-section">
+                    <h4>Kaynaklar</h4>
+                    ${sourceHTML}
+                </div>
+
+                ${
+                    preparation.verified === true
+                        ? `<span class="verification-label">Kaynak kontrolü yapılmış</span>`
+                        : `<span class="unverified-label">Bilgiler henüz doğrulanmadı</span>`
+                }
+
+            </article>
+        `;
+    }
+
+    // Hastalık detay sayfası
     function showDiseaseDetail(diseaseId) {
         const disease = diseases.find(item =>
             String(item.id) === String(diseaseId)
@@ -161,79 +373,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!disease) return;
 
-        const relatedPreparations = preparations.filter(item =>
-            String(item.diseaseId) === String(diseaseId)
-        );
+        const relatedPreparations = getDiseasePreparations(diseaseId);
 
-        const plantCards = relatedPreparations.map(preparation => {
-            const plant = plants.find(item =>
-                String(item.id) === String(preparation.plantId)
-            );
+        // Tariflerdeki bitkileri tekilleştir.
+        const relatedPlantIds = [
+            ...new Set(
+                relatedPreparations.flatMap(item =>
+                    (item.plantIds || []).map(String)
+                )
+            )
+        ];
 
-            if (!plant) return "";
+        const relatedPlants = relatedPlantIds
+            .map(id => plants.find(plant => String(plant.id) === id))
+            .filter(Boolean);
 
-            return `
-                <article class="plant-card">
-                    <h3>${escapeHTML(plant.name)}</h3>
-
-                    ${plant.scientificName ? `
-                        <p>
-                            <strong>Bilimsel adı:</strong>
-                            <em>${escapeHTML(plant.scientificName)}</em>
-                        </p>
-                    ` : ""}
-
-                    <p>
-                        <strong>Geleneksel kullanım:</strong>
-                        ${escapeHTML(preparation.traditionalUse || "Bilgi eklenmemiş.")}
-                    </p>
-
-                    <div class="preparation-box">
-                        <h4>Hazırlanış yöntemi</h4>
-                        <p>${escapeHTML(preparation.method || "Bilgi eklenmemiş.")}</p>
-                    </div>
-
-                    ${preparation.quantity ? `
-                        <p>
-                            <strong>Miktar bilgisi:</strong>
-                            ${escapeHTML(preparation.quantity)}
-                        </p>
-                    ` : ""}
-
-                    ${preparation.frequency ? `
-                        <p>
-                            <strong>Kullanım sıklığı:</strong>
-                            ${escapeHTML(preparation.frequency)}
-                        </p>
-                    ` : ""}
-
-                    ${preparation.evidence ? `
-                        <div class="info-box">
-                            <h4>Bilimsel kanıt durumu</h4>
-                            <p>${escapeHTML(preparation.evidence)}</p>
-                        </div>
-                    ` : ""}
-
-                    ${preparation.warnings ? `
-                        <div class="info-box warning-box">
-                            <h4>Güvenlik uyarıları</h4>
-                            <p>${escapeHTML(preparation.warnings)}</p>
-                        </div>
-                    ` : ""}
-                </article>
+        const plantHTML = relatedPlants.length
+            ? `
+                <div class="plant-list">
+                    ${relatedPlants.map(createPlantCard).join("")}
+                </div>
+            `
+            : `
+                <p class="empty-information">
+                    Bu şikâyetle ilişkilendirilmiş bitki bilgisi henüz bulunmuyor.
+                </p>
             `;
-        }).filter(Boolean).join("");
 
-        const sources = [
-            ...(disease.sources || []),
-            ...relatedPreparations.flatMap(item => item.sources || [])
-        ];
-
-        const uniqueSources = [
-            ...new Map(
-                sources.map(source => [source.title + source.url, source])
-            ).values()
-        ];
+        const preparationHTML = relatedPreparations.length
+            ? relatedPreparations.map(createPreparationCard).join("")
+            : `
+                <p class="empty-information">
+                    Bu şikâyet için henüz tarif eklenmemiş.
+                </p>
+            `;
 
         detailContent.innerHTML = `
             <div class="detail-header">
@@ -246,63 +419,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 <p>${escapeHTML(disease.description)}</p>
             </div>
 
-            <h3 class="detail-subheading">
-                İlişkilendirilen bitkiler
-            </h3>
+            <section class="detail-block">
+                <h3 class="detail-subheading">
+                    Bu şikâyetle ilişkilendirilen bitkiler
+                </h3>
 
-            ${
-                plantCards
-                    ? `<div class="plant-list">${plantCards}</div>`
-                    : `<p class="no-results">
-                        Bu şikâyet için henüz bitki bilgisi eklenmemiş.
-                    </p>`
-            }
+                <p class="block-description">
+                    Aşağıdaki bitkiler hakkında geleneksel kullanım
+                    bilgileri sunulmaktadır. Listelenmeleri, bu bitkilerin
+                    şikâyeti tedavi ettiği anlamına gelmez.
+                </p>
+
+                ${plantHTML}
+            </section>
+
+            <section class="detail-block">
+                <h3 class="detail-subheading">
+                    Hazırlama yöntemleri ve alternatifler
+                </h3>
+
+                <p class="block-description">
+                    Her tarif kendi malzemeleri, hazırlanışı ve güvenlik
+                    bilgileriyle ayrı olarak gösterilir.
+                </p>
+
+                <div class="recipe-list">
+                    ${preparationHTML}
+                </div>
+            </section>
 
             <div class="info-box warning-box">
                 <h3>Önemli sağlık uyarısı</h3>
+
                 <p>
-                    Buradaki bilgiler geleneksel bitkisel kullanımları
-                    tanıtır; hastalıkları teşhis veya tedavi etmez.
                     Bitkisel ürünler yan etkilere neden olabilir ve
-                    ilaçlarla etkileşebilir. Özellikle düzenli ilaç
-                    kullanıyorsanız, hamileyseniz, emziriyorsanız veya
-                    kronik bir rahatsızlığınız varsa sağlık uzmanına
-                    danışmadan kullanmayınız.
+                    ilaçlarla etkileşebilir. Hamilelik, emzirme,
+                    kronik hastalık veya düzenli ilaç kullanımı
+                    durumunda sağlık uzmanına danışılmalıdır.
+                    Bu içerikler tanı veya tedavi önerisi değildir.
                 </p>
             </div>
-
-            ${
-                uniqueSources.length
-                    ? `
-                        <h3 class="detail-subheading">Kaynaklar</h3>
-                        <div class="info-box">
-                            <ul class="source-list">
-                                ${uniqueSources.map(source => `
-                                    <li>
-                                        ${
-                                            source.url
-                                                ? `<a href="${escapeHTML(source.url)}"
-                                                     target="_blank"
-                                                     rel="noopener noreferrer">
-                                                     ${escapeHTML(source.title)}
-                                                   </a>`
-                                                : escapeHTML(source.title)
-                                        }
-                                    </li>
-                                `).join("")}
-                            </ul>
-                        </div>
-                    `
-                    : `
-                        <div class="info-box">
-                            <h3>Kaynak bilgisi</h3>
-                            <p>
-                                Bu içerik için henüz doğrulanmış kaynak
-                                eklenmemiştir.
-                            </p>
-                        </div>
-                    `
-            }
         `;
 
         resultsSection.classList.add("hidden");
@@ -311,7 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
         diseaseDetail.scrollIntoView({ behavior: "smooth" });
     }
 
-    // Listeye geri dön.
+    // Listeye geri dön
     function goBack() {
         diseaseDetail.classList.add("hidden");
         resultsSection.classList.remove("hidden");
