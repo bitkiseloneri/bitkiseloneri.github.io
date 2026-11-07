@@ -1,0 +1,28 @@
+
+[
+    {
+        "id": 1,
+        "name": "Solunum Sistemi",
+        "description": "Öksürük, boğaz ağrısı ve solunum yollarıyla ilgili şikâyetler."
+    },
+    {
+        "id": 2,
+        "name": "Uyku ve Ruhsal İyi Oluş",
+        "description": "Uyku sorunları, stres ve huzursuzlukla ilgili şikâyetler."
+    },
+    {
+        "id": 3,
+        "name": "Sindirim Sistemi",
+        "description": "Mide rahatsızlığı, şişkinlik ve sindirim sistemi şikâyetleri."
+    },
+    {
+        "id": 4,
+        "name": "Ağrı ve Rahatsızlıklar",
+        "description": "Baş ağrısı ve farklı ağrı şikâyetleri."
+    },
+    {
+        "id": 5,
+        "name": "Cilt Sağlığı",
+        "description": "Cilt tahrişi, kızarıklık ve kaşıntıyla ilgili şikâyetler."
+    }
+]
