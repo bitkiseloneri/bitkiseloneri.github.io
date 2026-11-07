@@ -505,3 +505,159 @@ input {
         font-size: 27px;
     }
 }
+
+/* BİTKİ KARTLARI */
+
+.plant-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.plant-image {
+    width: 100%;
+    height: 190px;
+    object-fit: cover;
+    display: block;
+    background: #eaf3ed;
+}
+
+.plant-card-content {
+    padding: 20px;
+}
+
+.scientific-name {
+    font-style: italic;
+    font-size: 13px !important;
+    color: #849187 !important;
+}
+
+/* TARİF LİSTESİ */
+
+.recipe-list {
+    display: grid;
+    gap: 22px;
+    margin-top: 25px;
+}
+
+.recipe-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 25px;
+}
+
+.recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.recipe-number,
+.recipe-type {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-light);
+    padding: 6px 10px;
+    border-radius: 20px;
+}
+
+.recipe-card > h3 {
+    font-size: 21px;
+    color: var(--green-dark);
+    margin-bottom: 20px;
+}
+
+.recipe-section {
+    margin-top: 22px;
+}
+
+.recipe-section h4 {
+    color: var(--green-dark);
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.recipe-section p,
+.recipe-section li {
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.recipe-section ul,
+.preparation-steps {
+    padding-left: 22px;
+}
+
+.recipe-section li {
+    margin-bottom: 7px;
+}
+
+.ingredient-list {
+    list-style: disc;
+}
+
+.preparation-steps li {
+    padding-left: 5px;
+}
+
+.warning-box {
+    background: #fff8e9;
+    border: 1px solid #f0dfb9;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.warning-box h4,
+.warning-box h3 {
+    color: #87631e;
+}
+
+.verification-label,
+.unverified-label {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 6px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.verification-label {
+    background: #e7f3e9;
+    color: #397653;
+}
+
+.unverified-label {
+    background: #fff1db;
+    color: #94631e;
+}
+
+.block-description,
+.empty-information {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 12px 0 20px;
+}
+
+.detail-block {
+    margin-bottom: 45px;
+}
+
+@media (max-width: 550px) {
+    .recipe-card {
+        padding: 18px;
+    }
+
+    .recipe-card > h3 {
+        font-size: 19px;
+    }
+
+    .plant-image {
+        height: 170px;
+    }
+}
+
