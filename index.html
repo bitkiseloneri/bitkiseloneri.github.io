@@ -4,176 +4,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#174f38">
 
-    <meta name="description" content="BitkiRehberi ile bitkiler, belirtiler, geleneksel kullanım alanları ve bilimsel araştırmalar hakkında bilgi edinin.">
+    <meta name="description" content="BitkiRehberi ile bitkileri, geleneksel kullanım bilgilerini ve bilimsel kaynakları keşfedin.">
+    <meta name="theme-color" content="#f8faf7">
 
-    <title>BitkiRehberi | Bitkisel Bilgi Platformu</title>
+    <title>BitkiRehberi | Bitkileri Keşfedin</title>
 
     <link rel="stylesheet" href="css/style.css">
-    <script src="js/app.js" defer></script>
 </head>
-
 <body>
 
-<header class="header">
-    <div class="header-inner">
-        <a href="index.html" class="logo">
-            <span class="logo-icon">🌿</span>
-            <span>Bitki<span>Rehberi</span></span>
-        </a>
+    <header class="site-header">
+        <div class="container header-content">
 
-        <span class="header-text">
-            Bitkisel Bilgi ve Araştırma Platformu
-        </span>
-    </div>
-</header>
+            <a href="index.html" class="logo">
+                <span class="logo-icon">✳</span>
+                BitkiRehberi
+            </a>
 
-<main class="container">
+            <nav class="main-nav">
+                <a href="#bitkiler">Bitkiler</a>
+                <a href="#rahatsizliklar">Rahatsızlıklar</a>
+                <a href="#hakkinda">Hakkında</a>
+            </nav>
 
-    <section class="hero">
+        </div>
+    </header>
 
-        <div class="hero-content">
+    <main>
 
-            <span class="eyebrow">
-                DOĞAYI KEŞFET · BİLGİYE ULAŞ
-            </span>
+        <!-- Karşılama alanı -->
+        <section class="hero">
+            <div class="container hero-content">
 
-            <h1>
-                Bitkilerin dünyasını
-                <span>keşfetmeye başlayın.</span>
-            </h1>
+                <span class="eyebrow">DOĞADAN BİLGİYE</span>
 
-            <p>
-                Bitkiler, geleneksel kullanım alanları, belirtiler,
-                hazırlama yöntemleri ve bilimsel araştırmalar hakkında
-                kapsamlı bilgilere ulaşın.
-            </p>
+                <h1>
+                    Bitkileri tanıyın.<br>
+                    <em>Bilgiyle keşfedin.</em>
+                </h1>
 
-            <form id="searchForm" class="search-form">
+                <p>
+                    Bitkiler, geleneksel kullanım bilgileri ve bilimsel
+                    kaynaklar için sade bir başvuru rehberi.
+                </p>
 
-                <div class="search-input-wrapper">
-                    <span class="search-icon">⌕</span>
-
+                <form id="searchForm" class="search-form">
                     <input
                         type="search"
                         id="searchInput"
-                        placeholder="Bitki, belirti veya anahtar kelime arayın..."
-                        aria-label="Bitki veya belirti ara"
-                        autocomplete="off"
-                        required
+                        placeholder="Bitki veya rahatsızlık ara..."
+                        aria-label="Bitki veya rahatsızlık ara"
                     >
+
+                    <button type="submit">Ara</button>
+                </form>
+
+                <span class="search-description">
+                    Bitki adı, bilimsel ad veya kullanım alanına göre arayın.
+                </span>
+
+            </div>
+        </section>
+
+        <!-- Arama sonuçları -->
+        <section id="searchResults" class="section hidden">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">ARAMA</span>
+                        <h2>Arama sonuçları</h2>
+                    </div>
+
+                    <button id="clearSearch" class="text-button">
+                        Temizle
+                    </button>
                 </div>
 
-                <button type="submit">
-                    Ara <span>→</span>
-                </button>
+                <div id="resultsGrid" class="card-grid"></div>
 
-            </form>
+                <p id="noResults" class="empty-message hidden">
+                    Aramanızla eşleşen bir kayıt bulunamadı.
+                </p>
 
-        </div>
-
-        <div class="hero-decoration" aria-hidden="true">
-            <div class="decoration-circle">🌱</div>
-        </div>
-
-    </section>
-
-    <section class="features">
-
-        <div class="feature">
-            <span class="feature-icon">🌿</span>
-            <div>
-                <strong>Bitki bilgileri</strong>
-                <span>Bilimsel ve geleneksel bilgiler</span>
             </div>
-        </div>
+        </section>
 
-        <div class="feature">
-            <span class="feature-icon">🔎</span>
-            <div>
-                <strong>Akıllı arama</strong>
-                <span>Anahtar kelime tabanlı arama</span>
+        <!-- Bitkiler -->
+        <section id="bitkiler" class="section">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">KEŞFEDİN</span>
+                        <h2>Bitki rehberi</h2>
+                    </div>
+
+                    <span id="plantCount" class="record-count"></span>
+                </div>
+
+                <div id="plantGrid" class="plant-grid">
+                    <p class="loading-message">Bitkiler yükleniyor...</p>
+                </div>
+
             </div>
-        </div>
+        </section>
 
-        <div class="feature">
-            <span class="feature-icon">📚</span>
-            <div>
-                <strong>Kaynakça</strong>
-                <span>Kitap ve araştırma kaynakları</span>
+        <!-- Rahatsızlıklar -->
+        <section id="rahatsizliklar" class="section section-soft">
+            <div class="container">
+
+                <div class="section-heading">
+                    <div>
+                        <span class="eyebrow">KONUYA GÖRE</span>
+                        <h2>Rahatsızlıklar ve kullanım alanları</h2>
+                    </div>
+                </div>
+
+                <div id="diseaseList" class="disease-grid">
+                    <p class="loading-message">Kayıtlar yükleniyor...</p>
+                </div>
+
             </div>
-        </div>
+        </section>
 
-    </section>
+        <!-- Hakkında -->
+        <section id="hakkinda" class="section about-section">
+            <div class="container about-content">
 
-    <section class="results-section">
+                <span class="eyebrow">BİTKİREHBERİ HAKKINDA</span>
 
-        <div class="section-heading">
-
-            <div>
-                <span class="section-eyebrow">BİLGİ KÜTÜPHANESİ</span>
-                <h2>Arama sonuçları</h2>
-                <p>Aradığınız konu hakkındaki bilgileri inceleyin.</p>
-            </div>
-
-            <span id="resultCount" class="result-count"></span>
-
-        </div>
-
-        <div id="results" aria-live="polite" aria-busy="false">
-
-            <div class="welcome-message">
-                <span class="welcome-icon">🌿</span>
-
-                <h3>Keşfetmeye hazır mısınız?</h3>
+                <h2>
+                    Doğru bilgiye ulaşın.<br>
+                    <em>Kaynakları inceleyin.</em>
+                </h2>
 
                 <p>
-                    Arama alanına bir bitki adı, belirti
-                    veya anahtar kelime yazın.
+                    BitkiRehberi, bitkiler hakkında düzenli ve kaynak
+                    temelli bilgi sunmayı amaçlayan bilgilendirici
+                    bir başvuru platformudur.
                 </p>
+
+                <div class="disclaimer">
+                    <strong>Önemli sağlık uyarısı</strong>
+
+                    <p>
+                        Bu platformdaki bilgiler tıbbi tavsiye,
+                        tanı veya tedavi yerine geçmez. Bitkisel
+                        ürünler ilaçlarla etkileşebilir ve yan
+                        etkilere neden olabilir. Sağlık sorunlarınız
+                        için sağlık uzmanına danışınız.
+                    </p>
+                </div>
+
             </div>
+        </section>
+
+    </main>
+
+    <!-- Alt bilgi -->
+    <footer class="site-footer">
+        <div class="container footer-content">
+
+            <span>© <span id="currentYear"></span> BitkiRehberi</span>
+
+            <span>Doğadan bilgiye.</span>
 
         </div>
+    </footer>
 
-    </section>
+    <!-- Detay penceresi -->
+    <dialog id="detailDialog" class="detail-dialog">
 
-    <aside class="disclaimer">
+        <button
+            type="button"
+            id="closeDialog"
+            class="dialog-close"
+            aria-label="Pencereyi kapat"
+        >
+            ×
+        </button>
 
-        <div class="disclaimer-icon">ⓘ</div>
+        <div id="dialogContent"></div>
 
-        <div>
-            <strong>Önemli sağlık bilgilendirmesi</strong>
+    </dialog>
 
-            <p>
-                BitkiRehberi yalnızca bilgilendirme amacı taşır.
-                İçerikler tıbbi teşhis veya tedavi önerisi değildir.
-                Bitkisel ürünler ilaçlarla etkileşebilir ve yan etkilere
-                neden olabilir. Herhangi bir sağlık sorunu veya bitkisel
-                ürün kullanımı konusunda sağlık uzmanına danışın.
-                Acil belirtilerde vakit kaybetmeden tıbbi yardım alın.
-            </p>
-        </div>
-
-    </aside>
-
-</main>
-
-<footer class="footer">
-    <div class="footer-inner">
-
-        <a href="index.html" class="footer-logo">
-            🌿 BitkiRehberi
-        </a>
-
-        <p>Bilimsel bilgiye ve doğaya açılan bir pencere.</p>
-
-        <span>
-            © 2026 BitkiRehberi · Bilgilendirme amaçlı öğrenci projesi
-        </span>
-
-    </div>
-</footer>
+    <script src="js/app.js"></script>
 
 </body>
 </html>
