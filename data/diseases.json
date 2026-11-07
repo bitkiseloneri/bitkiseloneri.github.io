@@ -1,31 +1,66 @@
 
 [
   {
-    "disease_id": "D001",
-    "name": "Baş ağrısı",
+    "disease_id": "symptom_nausea",
+    "name": "Mide Bulantısı",
     "category": "Belirti",
-    "description": "Baş bölgesinde hissedilen ağrı. Farklı nedenleri olabilir.",
+    "description": "Mide bulantısı, kusma isteğiyle birlikte ortaya çıkabilen bir belirtidir. Sindirim sistemi rahatsızlıkları, enfeksiyonlar, kullanılan ilaçlar ve farklı sağlık durumlarıyla ilişkili olabilir.",
     "symptoms": [
-      "Başta ağrı",
-      "Başta baskı hissi"
+      "Kusma isteği",
+      "Midede rahatsızlık hissi",
+      "İştahsızlık",
+      "Terleme",
+      "Ağızda tükürük artışı"
+    ],
+    "keywords": [
+      "bulantı",
+      "mide bulantısı",
+      "mide bulanması",
+      "kusma hissi",
+      "mide rahatsızlığı",
+      "sindirim",
+      "nausea"
     ],
     "plant_ids": [
-      "P001"
+      "plant_ginger"
     ],
-    "medical_warning": "Ani ve çok şiddetli baş ağrısında acil tıbbi yardım alın."
+    "medical_warning": "Uzun süren veya şiddetli bulantı, sıvı kaybı, kanlı kusma ya da şiddetli karın ağrısı durumunda sağlık kuruluşuna başvurulmalıdır.",
+    "sources": [
+      {
+        "title": "Baytop, T. (1999). Türkiye'de Bitkiler ile Tedavi. Nobel Tıp Kitabevleri."
+      },
+      {
+        "title": "National Center for Complementary and Integrative Health. Ginger: Usefulness and Safety."
+      }
+    ]
   },
   {
-    "disease_id": "D002",
-    "name": "Boğaz ağrısı",
+    "disease_id": "symptom_headache",
+    "name": "Baş Ağrısı",
     "category": "Belirti",
-    "description": "Boğazda ağrı veya tahriş hissi.",
+    "description": "Baş ağrısı, başın veya yüz bölgesinin farklı kısımlarında hissedilebilen ağrıdır. Gerilim tipi baş ağrısı, migren ve farklı sağlık durumlarıyla ilişkili olabilir.",
     "symptoms": [
-      "Yutkunurken ağrı",
-      "Boğazda tahriş"
+      "Baş bölgesinde ağrı",
+      "Alın bölgesinde baskı hissi",
+      "Şakaklarda ağrı",
+      "Işığa hassasiyet",
+      "Bulantı"
     ],
-    "plant_ids": [
-      "P002"
+    "keywords": [
+      "baş ağrısı",
+      "başım ağrıyor",
+      "migren",
+      "şakak ağrısı",
+      "alın ağrısı",
+      "başta baskı",
+      "headache"
     ],
-    "medical_warning": "Nefes alma güçlüğünde acil yardım alın."
+    "plant_ids": [],
+    "medical_warning": "Ani başlayan ve hayatın en şiddetli baş ağrısı olarak tanımlanan ağrı, bilinç değişikliği, güç kaybı veya konuşma bozukluğuyla birlikteyse acil tıbbi yardım alınmalıdır.",
+    "sources": [
+      {
+        "title": "International Headache Society. The International Classification of Headache Disorders, 3rd edition (ICHD-3)."
+      }
+    ]
   }
 ]
