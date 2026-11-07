@@ -1,1 +1,64 @@
-BİTKİ TEDAVİ 
+
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitkisel Bilgi Rehberi</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <header class="header">
+        <a href="index.html" class="logo">🌿 BitkiRehberi</a>
+        <span class="header-text">Bitkiler hakkında bilgi edinin</span>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <span class="eyebrow">DOĞADAN BİLGİYE</span>
+            <h1>Bitkileri keşfet, doğru bilgiye ulaş.</h1>
+            <p>
+                Bir belirti veya bitki adı arayın.
+                Bitkiler, hazırlanma yöntemleri ve güvenlik bilgilerini inceleyin.
+            </p>
+
+            <form id="searchForm" class="search-form">
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Örn. baş ağrısı, boğaz ağrısı..."
+                    aria-label="Belirti veya bitki adı"
+                    required
+                >
+                <button type="submit">Ara</button>
+            </form>
+            <p class="search-hint">Örnek: baş ağrısı veya zencefil</p>
+        </section>
+
+        <section class="results-section">
+            <div class="section-heading">
+                <h2>Arama sonuçları</h2>
+                <span id="resultCount"></span>
+            </div>
+            <div id="results" aria-live="polite">
+                <p class="message">Aramak istediğiniz ifadeyi yazın.</p>
+            </div>
+        </section>
+
+        <aside class="disclaimer">
+            <strong>Sağlık bilgilendirmesi</strong>
+            <p>
+                Bu site teşhis koymaz ve tedavi yerine geçmez.
+                Bitkiler ilaçlarla etkileşebilir. Sağlık sorununuz varsa
+                sağlık uzmanına danışın. Ani ve çok şiddetli baş ağrısı
+                gibi acil belirtilerde vakit kaybetmeden yardım alın.
+            </p>
+        </aside>
+    </main>
+
+    <footer class="footer">
+        <p>BitkiRehberi · Bilgilendirme amaçlı bir öğrenci projesi</p>
+    </footer>
+</body>
+</html>

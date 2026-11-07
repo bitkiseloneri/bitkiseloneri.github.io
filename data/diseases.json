@@ -1,0 +1,31 @@
+
+[
+  {
+    "disease_id": "D001",
+    "name": "Baş ağrısı",
+    "category": "Belirti",
+    "description": "Baş bölgesinde hissedilen ağrı. Farklı nedenleri olabilir.",
+    "symptoms": [
+      "Başta ağrı",
+      "Başta baskı hissi"
+    ],
+    "plant_ids": [
+      "P001"
+    ],
+    "medical_warning": "Ani ve çok şiddetli baş ağrısında acil tıbbi yardım alın."
+  },
+  {
+    "disease_id": "D002",
+    "name": "Boğaz ağrısı",
+    "category": "Belirti",
+    "description": "Boğazda ağrı veya tahriş hissi.",
+    "symptoms": [
+      "Yutkunurken ağrı",
+      "Boğazda tahriş"
+    ],
+    "plant_ids": [
+      "P002"
+    ],
+    "medical_warning": "Nefes alma güçlüğünde acil yardım alın."
+  }
+]

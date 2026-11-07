@@ -1,0 +1,39 @@
+
+[
+  {
+    "plant_id": "P001",
+    "common_name": "Zencefil",
+    "scientific_name": "Zingiber officinale",
+    "plant_family": "Zencefilgiller",
+    "plant_parts": [
+      "Kök gövde"
+    ],
+    "description": "Yemeklerde yaygın olarak kullanılan bir bitki.",
+    "preparation_ids": [
+      "PR001"
+    ],
+    "safety_notes": [
+      "Bazı ilaçlarla etkileşebilir.",
+      "Tıbbi amaçlı kullanımı kişiye göre değerlendirilmelidir."
+    ],
+    "evidence_level": "İnceleme gerekli"
+  },
+  {
+    "plant_id": "P002",
+    "common_name": "Papatya",
+    "scientific_name": "Matricaria chamomilla",
+    "plant_family": "Papatyagiller",
+    "plant_parts": [
+      "Çiçek"
+    ],
+    "description": "Geleneksel kullanımlarda ve bitki çaylarında yer alan bir bitki.",
+    "preparation_ids": [
+      "PR002"
+    ],
+    "safety_notes": [
+      "Bazı kişilerde alerjik reaksiyonlara neden olabilir.",
+      "İlaçlarla etkileşim ihtimali değerlendirilmelidir."
+    ],
+    "evidence_level": "İnceleme gerekli"
+  }
+]

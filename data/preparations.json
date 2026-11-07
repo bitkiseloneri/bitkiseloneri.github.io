@@ -1,0 +1,48 @@
+
+[
+  {
+    "preparation_id": "PR001",
+    "plant_id": "P001",
+    "method_name": "Yemeklerde kullanım",
+    "method_type": "Yemek",
+    "title": "Taze zencefilin yemeklerde kullanımı",
+    "ingredients": [
+      {
+        "name": "Taze zencefil",
+        "amount": "Tarife göre"
+      }
+    ],
+    "steps": [
+      "Zencefili yıkayın.",
+      "İsteğe bağlı olarak kabuğunu soyun.",
+      "İnce dilimleyin veya rendeleyin.",
+      "Tarife uygun şekilde yemeğe ekleyin."
+    ],
+    "intended_use": "Yemeklerde kullanım; hastalık tedavisi önerisi değildir.",
+    "dosage": null,
+    "duration": null,
+    "safety_notes": [
+      "Yemeklerde kullanım, hastalıkları tedavi ettiğini kanıtlamaz."
+    ],
+    "source_ids": []
+  },
+  {
+    "preparation_id": "PR002",
+    "plant_id": "P002",
+    "method_name": "Bitki infüzyonu",
+    "method_type": "Demleme",
+    "title": "Papatya için hazırlama bilgisi",
+    "ingredients": [],
+    "steps": [
+      "Bitki türünün doğru tanımlandığından emin olun.",
+      "Hazırlama yöntemi için güvenilir ve uzman incelemesinden geçmiş bir kaynağa başvurun."
+    ],
+    "intended_use": "Bilgilendirme amaçlı hazırlama kaydı.",
+    "dosage": null,
+    "duration": null,
+    "safety_notes": [
+      "Bitkisel ürünler herkes için uygun olmayabilir."
+    ],
+    "source_ids": []
+  }
+]
