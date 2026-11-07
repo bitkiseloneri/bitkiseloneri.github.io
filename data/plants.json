@@ -1,120 +1,45 @@
 
 [
-  {
-    "plant_id": "plant_ginger",
-    "common_name": "Zencefil",
-    "scientific_name": "Zingiber officinale",
-    "alternative_names": [
-      "Taze zencefil",
-      "Zencefil kökü"
-    ],
-    "description": "Zencefil, Zingiberaceae familyasına ait aromatik bir bitkidir. Toprak altında gelişen rizom adı verilen gövdesi gıda ve geleneksel bitkisel uygulamalarda kullanılır.",
-    "origin": "Tropikal Asya",
-    "plant_parts": [
-      "Rizom (toprak altı gövdesi)"
-    ],
-    "traditional_uses": [
-      "Geleneksel olarak sindirim sistemiyle ilgili şikâyetlerde kullanılmıştır.",
-      "Geleneksel uygulamalarda bulantıyla ilişkili kullanımları bulunmaktadır.",
-      "Yiyecek ve içeceklerde baharat olarak kullanılmaktadır."
-    ],
-    "scientific_evidence": {
-      "summary": "Zencefil üzerine insanlarda yapılmış araştırmalar bulunmaktadır. Bazı araştırmalar özellikle gebelik kaynaklı bulantı ve kusma üzerinde olumlu sonuçlar bildirmiştir. Araştırmaların kapsamı, kullanılan ürün ve sonuçları farklılık gösterir.",
-      "evidence_level": "Kullanım alanına göre değişken",
-      "limitations": [
-        "Araştırmaların bir kısmı zencefil takviyelerini incelemektedir.",
-        "Gıdalarda kullanılan zencefil ile takviyelerin etkileri aynı kabul edilmemelidir.",
-        "Bütün kullanım alanları için yeterli bilimsel kanıt bulunmamaktadır."
-      ]
+    {
+        "id": 1,
+        "name": "Papatya",
+        "scientificName": "Matricaria chamomilla",
+        "description": "Geleneksel bitkisel kullanımı bulunan, papatyagiller familyasına ait aromatik bir bitkidir.",
+        "image": "images/plants/papatya.jpg"
     },
-    "safety_notes": [
-      "Ağız yoluyla tüketildiğinde mide yanması ve mide rahatsızlığı görülebilir.",
-      "Bazı kişilerde ishal ve ağız-boğaz tahrişi oluşabilir.",
-      "İlaç kullanan kişiler takviye kullanmadan önce sağlık uzmanına danışmalıdır.",
-      "Hamilelik ve emzirme dönemlerinde takviye kullanımı sağlık uzmanıyla değerlendirilmelidir.",
-      "Bitkisel ürünler reçeteli ilaçların yerine kullanılmamalıdır."
-    ],
-    "keywords": [
-      "zencefil",
-      "taze zencefil",
-      "zingiber officinale",
-      "ginger",
-      "zencefil kökü",
-      "rizom",
-      "mide bulantısı",
-      "bulantı",
-      "sindirim"
-    ],
-    "preparation_ids": [
-      "prep_ginger_infusion"
-    ],
-    "sources": [
-      {
-        "title": "Baytop, T. (1999). Türkiye'de Bitkiler ile Tedavi. Nobel Tıp Kitabevleri."
-      },
-      {
-        "title": "National Center for Complementary and Integrative Health. Ginger: Usefulness and Safety."
-      },
-      {
-        "title": "European Medicines Agency. Assessment report on Zingiber officinale Roscoe, rhizoma."
-      }
-    ]
-  },
-  {
-    "plant_id": "plant_mint",
-    "common_name": "Nane",
-    "scientific_name": "Mentha × piperita",
-    "alternative_names": [
-      "Tıbbi nane",
-      "İngiliz nanesi",
-      "Peppermint"
-    ],
-    "description": "Nane, Lamiaceae familyasına ait aromatik bir bitkidir. Yaprakları gıda, içecek ve geleneksel bitkisel uygulamalarda kullanılmaktadır.",
-    "origin": "Avrupa ve farklı ılıman bölgelerde yetiştirilmektedir.",
-    "plant_parts": [
-      "Yaprak",
-      "Toprak üstü kısımlar"
-    ],
-    "traditional_uses": [
-      "Geleneksel olarak sindirim sistemiyle ilgili uygulamalarda kullanılmıştır.",
-      "Aromatik özelliği nedeniyle içecek ve gıdalarda tercih edilmektedir.",
-      "Nane yağı geleneksel ve modern bitkisel ürünlerde kullanılmaktadır."
-    ],
-    "scientific_evidence": {
-      "summary": "Nane ve nane yağı üzerine çeşitli araştırmalar yapılmıştır. Özellikle enterik kaplı nane yağı ürünleri ile irritabl bağırsak sendromu belirtileri üzerine çalışmalar bulunmaktadır. Bu sonuçlar her nane hazırlama biçimine genellenemez.",
-      "evidence_level": "Ürün ve kullanım alanına göre değişken",
-      "limitations": [
-        "Nane yaprağı ile konsantre nane yağı aynı ürün değildir.",
-        "Araştırmalar belirli doz ve ürün türleri üzerinde yapılmıştır.",
-        "Her sindirim sistemi rahatsızlığında etkili olduğu söylenemez."
-      ]
+    {
+        "id": 2,
+        "name": "Ihlamur",
+        "scientificName": "Tilia cordata",
+        "description": "Çiçekleri geleneksel bitkisel kullanımlarda değerlendirilen bir ağaç türüdür.",
+        "image": "images/plants/ihlamur.jpg"
     },
-    "safety_notes": [
-      "Nane bazı kişilerde mide yanmasını artırabilir.",
-      "Nane yağı yoğunlaştırılmış bir üründür ve doğrudan tüketilmesi uygun olmayabilir.",
-      "Reflü ve safra yolu sorunları olan kişiler kullanımdan önce sağlık uzmanına danışmalıdır.",
-      "Uçucu yağlar çocuklarda ve hassas kişilerde özel dikkat gerektirir."
-    ],
-    "keywords": [
-      "nane",
-      "mentha piperita",
-      "peppermint",
-      "tıbbi nane",
-      "nane yaprağı",
-      "nane yağı",
-      "aromatik bitki",
-      "sindirim"
-    ],
-    "preparation_ids": [
-      "prep_mint_infusion"
-    ],
-    "sources": [
-      {
-        "title": "Baytop, T. (1999). Türkiye'de Bitkiler ile Tedavi. Nobel Tıp Kitabevleri."
-      },
-      {
-        "title": "European Medicines Agency. European Union herbal monograph on Mentha × piperita L., folium."
-      }
-    ]
-  }
+    {
+        "id": 3,
+        "name": "Nane",
+        "scientificName": "Mentha × piperita",
+        "description": "Aromatik yaprakları geleneksel kullanımlarda ve gıda alanında değerlendirilen bir bitkidir.",
+        "image": "images/plants/nane.jpg"
+    },
+    {
+        "id": 4,
+        "name": "Zencefil",
+        "scientificName": "Zingiber officinale",
+        "description": "Rizomu geleneksel kullanımlarda ve mutfakta kullanılan bir bitkidir.",
+        "image": "images/plants/zencefil.jpg"
+    },
+    {
+        "id": 5,
+        "name": "Melisa",
+        "scientificName": "Melissa officinalis",
+        "description": "Yaprakları aromatik özellik taşıyan ve geleneksel bitkisel kullanımı bulunan bir bitkidir.",
+        "image": "images/plants/melisa.jpg"
+    },
+    {
+        "id": 6,
+        "name": "Rezene",
+        "scientificName": "Foeniculum vulgare",
+        "description": "Meyveleri geleneksel kullanımlarda ve gıda alanında değerlendirilen aromatik bir bitkidir.",
+        "image": "images/plants/rezene.jpg"
+    }
 ]
