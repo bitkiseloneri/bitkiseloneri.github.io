@@ -1,666 +1,891 @@
 
-"use strict";
+/* =========================================
+   BİTKİREHBERİ - ANA JAVASCRIPT
+========================================= */
 
-// ==========================================
-// HTML ELEMENTLERİ
-// ==========================================
+const DATA_PATH = "data/";
 
-const searchForm = document.getElementById("searchForm");
-const searchInput = document.getElementById("searchInput");
-const resultsContainer = document.getElementById("results");
-const resultCount = document.getElementById("resultCount");
+const PLACEHOLDER_IMAGE = "images/plants/plant-placeholder.svg";
 
-// ==========================================
-// VERİLER
-// ==========================================
-
-let diseases = [];
 let plants = [];
+let diseases = [];
 let preparations = [];
+let categories = [];
 
-let dataLoaded = false;
 
-// ==========================================
-// METİN NORMALİZASYONU
-// ==========================================
+/* =========================================
+   GENEL YARDIMCI FONKSİYONLAR
+========================================= */
+
+const $ = (selector) => document.querySelector(selector);
 
 function normalizeText(value) {
     return String(value ?? "")
         .toLocaleLowerCase("tr-TR")
-        .replace(/ı/g, "i")
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(/\s+/g, " ")
         .trim();
 }
 
-// ==========================================
-// YÜKLENİYOR EKRANI
-// ==========================================
+function createElement(tag, className = "", text = "") {
+    const element = document.createElement(tag);
 
-function showLoading() {
-    resultsContainer.replaceChildren();
+    if (className) {
+        element.className = className;
+    }
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "loading";
+    if (text !== "") {
+        element.textContent = text;
+    }
 
-    const spinner = document.createElement("div");
-    spinner.className = "spinner";
-
-    const message = document.createElement("p");
-    message.textContent = "Bitkisel bilgiler yükleniyor...";
-
-    wrapper.append(spinner, message);
-
-    resultsContainer.appendChild(wrapper);
-    resultsContainer.setAttribute("aria-busy", "true");
-
-    resultCount.textContent = "";
+    return element;
 }
 
-// ==========================================
-// MESAJ GÖSTERME
-// ==========================================
-
-function showMessage(message, type = "message") {
-    resultsContainer.replaceChildren();
-
-    const element = document.createElement("p");
-    element.className = type;
-    element.textContent = message;
-
-    resultsContainer.appendChild(element);
-
-    resultsContainer.setAttribute("aria-busy", "false");
-    resultCount.textContent = "";
+function setImageFallback(image) {
+    image.onerror = () => {
+        image.onerror = null;
+        image.src = PLACEHOLDER_IMAGE;
+    };
 }
 
-// ==========================================
-// JSON VERİLERİNİ YÜKLE
-// ==========================================
+
+/* =========================================
+   JSON VERİLERİNİ YÜKLE
+========================================= */
 
 async function loadData() {
-    showLoading();
 
     try {
-        const urls = [
-            "./data/diseases.json",
-            "./data/plants.json",
-            "./data/preparations.json"
-        ];
 
-        const responses = await Promise.all(
-            urls.map(url => fetch(url))
-        );
+        const responses = await Promise.all([
+            fetch(DATA_PATH + "plants.json"),
+            fetch(DATA_PATH + "diseases.json"),
+            fetch(DATA_PATH + "preparations.json"),
+            fetch(DATA_PATH + "categories.json")
+        ]);
 
-        for (const response of responses) {
-            if (!response.ok) {
-                throw new Error(
-                    `Dosya yüklenemedi: ${response.url}`
-                );
-            }
+        if (!responses.every(response => response.ok)) {
+            throw new Error("JSON dosyalarından biri yüklenemedi.");
         }
 
         const data = await Promise.all(
             responses.map(response => response.json())
         );
 
-        if (!data.every(Array.isArray)) {
-            throw new Error("JSON dosyalarının ana yapısı dizi olmalıdır.");
-        }
+        plants = data[0];
+        diseases = data[1];
+        preparations = data[2];
+        categories = data[3];
 
-        [diseases, plants, preparations] = data;
+        renderPlants(plants);
+        renderDiseases();
 
-        validateData();
-
-        dataLoaded = true;
-
-        showMessage(
-            "Veriler başarıyla yüklendi. Arama yapabilirsiniz."
-        );
+        $("#plantCount").textContent = `${plants.length} bitki`;
 
     } catch (error) {
+
         console.error("Veri yükleme hatası:", error);
 
-        dataLoaded = false;
-
-        showMessage(
-            "Veriler yüklenemedi. JSON dosyalarını ve sunucu ayarlarını kontrol edin.",
-            "error-message"
-        );
-    }
-}
-
-// ==========================================
-// VERİ KONTROLLERİ
-// ==========================================
-
-function validateData() {
-    const checkIds = (items, field, name) => {
-        const ids = items.map(item => item[field]);
-
-        if (ids.some(id => !id)) {
-            throw new Error(`${name} dosyasında eksik ID var.`);
-        }
-
-        if (new Set(ids).size !== ids.length) {
-            throw new Error(`${name} dosyasında tekrarlanan ID var.`);
-        }
-    };
-
-    checkIds(diseases, "disease_id", "Hastalık");
-    checkIds(plants, "plant_id", "Bitki");
-    checkIds(preparations, "preparation_id", "Hazırlama");
-
-    const plantIds = new Set(plants.map(p => p.plant_id));
-    const preparationIds = new Set(
-        preparations.map(p => p.preparation_id)
-    );
-
-    for (const disease of diseases) {
-        for (const id of disease.plant_ids ?? []) {
-            if (!plantIds.has(id)) {
-                console.warn(
-                    `Bulunamayan bitki ID: ${id}`,
-                    disease.name
-                );
-            }
-        }
-    }
-
-    for (const plant of plants) {
-        for (const id of plant.preparation_ids ?? []) {
-            if (!preparationIds.has(id)) {
-                console.warn(
-                    `Bulunamayan hazırlama ID: ${id}`,
-                    plant.common_name
-                );
-            }
-        }
-    }
-}
-
-// ==========================================
-// ID İLE KAYIT BULMA
-// ==========================================
-
-function getPlant(plantId) {
-    return plants.find(
-        plant => plant.plant_id === plantId
-    );
-}
-
-function getPreparations(plant) {
-    return (plant.preparation_ids ?? [])
-        .map(id =>
-            preparations.find(
-                item => item.preparation_id === id
+        $("#plantGrid").replaceChildren(
+            createElement(
+                "p",
+                "empty-message",
+                "Veriler yüklenemedi. JSON dosyalarını ve yerel sunucu bağlantısını kontrol edin."
             )
-        )
-        .filter(Boolean);
-}
+        );
 
-function getPlantById(plantId) {
-    return getPlant(plantId);
-}
+        $("#diseaseList").replaceChildren();
 
-// ==========================================
-// GÜVENLİ HTML ELEMANLARI
-// ==========================================
-
-function addText(parent, tag, value, className = "") {
-    const element = document.createElement(tag);
-
-    element.textContent = value ?? "";
-
-    if (className) {
-        element.className = className;
     }
 
-    parent.appendChild(element);
-
-    return element;
 }
 
-// ==========================================
-// LİSTE OLUŞTUR
-// ==========================================
 
-function addList(parent, title, items) {
-    if (!Array.isArray(items) || items.length === 0) {
+/* =========================================
+   BİTKİ KARTLARI
+========================================= */
+
+function createPlantCard(plant) {
+
+    const card = createElement("article", "plant-card");
+
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
+
+    card.setAttribute(
+        "aria-label",
+        `${plant.common_name} detaylarını görüntüle`
+    );
+
+    const image = document.createElement("img");
+
+    image.src = plant.image || PLACEHOLDER_IMAGE;
+    image.alt = plant.common_name || "Bitki görseli";
+
+    setImageFallback(image);
+
+    const body = createElement("div", "card-body");
+
+    const category = createElement(
+        "span",
+        "tag",
+        plant.category || "Bitki"
+    );
+
+    const title = createElement(
+        "h3",
+        "",
+        plant.common_name
+    );
+
+    const scientificName = createElement(
+        "div",
+        "latin",
+        plant.scientific_name
+    );
+
+    const description = createElement(
+        "p",
+        "",
+        plant.short_description || plant.description || ""
+    );
+
+    body.append(
+        category,
+        title,
+        scientificName,
+        description
+    );
+
+    card.append(image, body);
+
+    card.addEventListener("click", () => {
+        showPlantDetails(plant);
+    });
+
+    card.addEventListener("keydown", event => {
+
+        if (event.key === "Enter" || event.key === " ") {
+
+            event.preventDefault();
+
+            showPlantDetails(plant);
+
+        }
+
+    });
+
+    return card;
+
+}
+
+
+/* =========================================
+   BİTKİLERİ EKRANA YAZ
+========================================= */
+
+function renderPlants(list) {
+
+    const grid = $("#plantGrid");
+
+    grid.replaceChildren();
+
+    if (!list.length) {
+
+        grid.append(
+            createElement(
+                "p",
+                "empty-message",
+                "Henüz bitki kaydı bulunmuyor."
+            )
+        );
+
+        return;
+
+    }
+
+    list.forEach(plant => {
+
+        grid.append(
+            createPlantCard(plant)
+        );
+
+    });
+
+    $("#plantCount").textContent = `${list.length} bitki`;
+
+}
+
+
+/* =========================================
+   RAHATSIZLIK LİSTESİ
+========================================= */
+
+function renderDiseases() {
+
+    const list = $("#diseaseList");
+
+    list.replaceChildren();
+
+    diseases.forEach(disease => {
+
+        const button = createElement(
+            "button",
+            "topic-item"
+        );
+
+        button.type = "button";
+
+        const title = createElement(
+            "span",
+            "",
+            disease.name
+        );
+
+        const arrow = createElement(
+            "span",
+            "",
+            "→"
+        );
+
+        button.append(title, arrow);
+
+        button.addEventListener("click", () => {
+            showDiseaseDetails(disease);
+        });
+
+        list.append(button);
+
+    });
+
+}
+
+
+/* =========================================
+   DETAY PENCERESİ YARDIMCILARI
+========================================= */
+
+function openDetailDialog() {
+
+    const dialog = $("#detailDialog");
+
+    if (!dialog.open) {
+        dialog.showModal();
+    }
+
+}
+
+function clearDetailDialog() {
+
+    $("#dialogContent").replaceChildren();
+
+}
+
+function addDetailHeading(parent, title) {
+
+    const heading = createElement(
+        "h3",
+        "",
+        title
+    );
+
+    parent.append(heading);
+
+}
+
+function addDetailText(parent, title, content) {
+
+    if (!content) return;
+
+    addDetailHeading(parent, title);
+
+    const paragraph = createElement(
+        "p",
+        "",
+        content
+    );
+
+    parent.append(paragraph);
+
+}
+
+function addDetailList(parent, title, items) {
+
+    if (!Array.isArray(items) || !items.length) {
         return;
     }
 
-    addText(parent, "h4", title);
+    addDetailHeading(parent, title);
+
+    const ul = document.createElement("ul");
+
+    items.forEach(item => {
+
+        const value = typeof item === "string"
+            ? item
+            : item.title || "";
+
+        const li = createElement("li", "", value);
+
+        ul.append(li);
+
+    });
+
+    parent.append(ul);
+
+}
+
+
+/* =========================================
+   KAYNAKÇA
+========================================= */
+
+function addBibliography(parent, bibliography) {
+
+    if (!Array.isArray(bibliography) || !bibliography.length) {
+        return;
+    }
+
+    addDetailHeading(parent, "Kaynakça");
 
     const list = document.createElement("ul");
 
-    items.forEach(item => {
-        const li = document.createElement("li");
+    bibliography.forEach(source => {
 
-        if (typeof item === "string") {
-            li.textContent = item;
-        } else {
-            li.textContent =
-                `${item.name ?? ""}: ${item.amount ?? ""}`;
-        }
+        const item = createElement(
+            "li",
+            "",
+            source.title
+        );
 
-        list.appendChild(li);
+        list.append(item);
+
     });
 
-    parent.appendChild(list);
+    parent.append(list);
+
 }
 
-// ==========================================
-// KAYNAKÇA
-// ==========================================
 
-function renderSources(parent, sources) {
-    if (!Array.isArray(sources) || sources.length === 0) {
-        return;
-    }
+/* =========================================
+   BİTKİ DETAYLARI
+========================================= */
 
-    const section = document.createElement("div");
-    section.className = "sources";
+function showPlantDetails(plant) {
 
-    addText(section, "h4", "📚 Kaynakça");
+    const content = $("#dialogContent");
 
-    const list = document.createElement("ol");
+    clearDetailDialog();
 
-    sources.forEach(source => {
-        if (!source.title) return;
-
-        const li = document.createElement("li");
-        li.className = "source-title";
-        li.textContent = source.title;
-
-        list.appendChild(li);
-    });
-
-    if (list.children.length === 0) return;
-
-    section.appendChild(list);
-    parent.appendChild(section);
-}
-
-// ==========================================
-// BİLİMSEL KANIT BİLGİSİ
-// ==========================================
-
-function renderEvidence(parent, evidence) {
-    if (!evidence) return;
-
-    const section = document.createElement("div");
-    section.className = "evidence";
-
-    addText(section, "h4", "Bilimsel araştırmalar");
-
-    if (evidence.summary) {
-        addText(section, "p", evidence.summary);
-    }
-
-    if (evidence.evidence_level) {
-        addText(
-            section,
-            "p",
-            `Kanıt durumu: ${evidence.evidence_level}`,
-            "evidence-level"
-        );
-    }
-
-    addList(
-        section,
-        "Araştırmaların sınırlılıkları",
-        evidence.limitations
+    const title = createElement(
+        "h2",
+        "",
+        plant.common_name
     );
 
-    parent.appendChild(section);
-}
-
-// ==========================================
-// HAZIRLAMA YÖNTEMİ KARTI
-// ==========================================
-
-function renderPreparation(parent, preparation) {
-    const card = document.createElement("div");
-    card.className = "plant-card preparation-card";
-
-    addText(
-        card,
-        "span",
-        preparation.method_name ?? "Hazırlama yöntemi",
-        "tag"
+    const scientificName = createElement(
+        "p",
+        "latin",
+        plant.scientific_name
     );
 
-    addText(card, "h4", preparation.title);
-    addText(card, "p", preparation.intended_use);
+    content.append(title, scientificName);
 
-    addList(card, "İçindekiler", preparation.ingredients);
-    addList(card, "Hazırlama adımları", preparation.steps);
-    addList(card, "Güvenlik bilgileri", preparation.safety_notes);
+    const image = document.createElement("img");
 
-    if (preparation.dosage) {
-        addText(
-            card,
-            "p",
-            `Kullanım miktarı: ${preparation.dosage}`
-        );
-    }
+    image.src = plant.image || PLACEHOLDER_IMAGE;
+    image.alt = plant.common_name;
 
-    if (preparation.duration) {
-        addText(
-            card,
-            "p",
-            `Kullanım süresi: ${preparation.duration}`
-        );
-    }
+    setImageFallback(image);
 
-    renderSources(card, preparation.sources);
+    content.append(image);
 
-    parent.appendChild(card);
-}
+    addDetailText(
+        content,
+        "Açıklama",
+        plant.description
+    );
 
-// ==========================================
-// BİTKİ KARTI
-// ==========================================
+    addDetailText(
+        content,
+        "Köken",
+        plant.origin
+    );
 
-function renderPlant(parent, plant, options = {}) {
-    const card = document.createElement("div");
-    card.className = "plant-card";
-
-    addText(card, "span", "Bitkisel bilgi", "tag");
-
-    addText(card, "h4", plant.common_name);
-
-    if (plant.scientific_name) {
-        addText(
-            card,
-            "p",
-            `Bilimsel adı: ${plant.scientific_name}`
-        );
-    }
-
-    if (plant.origin) {
-        addText(
-            card,
-            "p",
-            `Kökeni: ${plant.origin}`
-        );
-    }
-
-    addText(card, "p", plant.description);
-
-    addList(
-        card,
-        "Diğer isimleri",
+    addDetailList(
+        content,
+        "Alternatif adlar",
         plant.alternative_names
     );
 
-    addList(
-        card,
-        "Kullanılan bitki bölümleri",
+    addDetailList(
+        content,
+        "Kullanılan bitki kısımları",
         plant.plant_parts
     );
 
-    addList(
-        card,
-        "Geleneksel kullanım alanları",
+    addDetailList(
+        content,
+        "Geleneksel kullanım",
         plant.traditional_uses
     );
 
-    renderEvidence(card, plant.scientific_evidence);
+    addDetailText(
+        content,
+        "Bilimsel kanıt ve sınırlılıklar",
+        plant.evidence
+    );
 
-    addList(
-        card,
-        "Güvenlik uyarıları",
+    addDetailList(
+        content,
+        "Güvenlik notları",
         plant.safety_notes
     );
 
-    const methods = getPreparations(plant);
+    const relatedPreparations = preparations.filter(
+        item => item.plant_id === plant.id
+    );
 
-    if (methods.length > 0 && options.showPreparations !== false) {
-        addText(card, "h4", "Hazırlama yöntemleri");
+    if (relatedPreparations.length) {
 
-        methods.forEach(method => {
-            renderPreparation(card, method);
+        addDetailHeading(
+            content,
+            "İlişkili hazırlama kayıtları"
+        );
+
+        relatedPreparations.forEach(item => {
+
+            const disease = diseases.find(
+                disease => disease.id === item.disease_id
+            );
+
+            const block = document.createElement("div");
+
+            block.className = "preparation-detail";
+
+            addDetailText(
+                block,
+                item.title,
+                item.intended_use
+            );
+
+            if (disease) {
+
+                const related = createElement(
+                    "p",
+                    "",
+                    `İlişkili konu: ${disease.name}`
+                );
+
+                block.append(related);
+
+            }
+
+            addDetailText(
+                block,
+                "Hazırlama yöntemi",
+                item.method
+            );
+
+            content.append(block);
+
         });
+
     }
 
-    renderSources(card, plant.sources);
+    addBibliography(
+        content,
+        plant.bibliography
+    );
 
-    parent.appendChild(card);
+    openDetailDialog();
 
-    return card;
 }
 
-// ==========================================
-// HASTALIK / BELİRTİ KARTI
-// ==========================================
 
-function renderDisease(disease, shownPlantIds) {
-    const card = document.createElement("article");
-    card.className = "result-card";
+/* =========================================
+   RAHATSIZLIK DETAYLARI
+========================================= */
 
-    addText(
-        card,
+function showDiseaseDetails(disease) {
+
+    const content = $("#dialogContent");
+
+    clearDetailDialog();
+
+    const title = createElement(
+        "h2",
+        "",
+        disease.name
+    );
+
+    content.append(title);
+
+    addDetailText(
+        content,
+        "Açıklama",
+        disease.description
+    );
+
+    addDetailList(
+        content,
+        "Belirtiler",
+        disease.symptoms
+    );
+
+    addDetailList(
+        content,
+        "Anahtar kelimeler",
+        disease.keywords
+    );
+
+    const relatedPreparations = preparations.filter(
+        item => item.disease_id === disease.id
+    );
+
+    if (relatedPreparations.length) {
+
+        addDetailHeading(
+            content,
+            "İlişkili bitkiler ve hazırlama kayıtları"
+        );
+
+        relatedPreparations.forEach(item => {
+
+            const plant = plants.find(
+                plant => plant.id === item.plant_id
+            );
+
+            const block = document.createElement("div");
+
+            block.className = "preparation-detail";
+
+            const name = createElement(
+                "h3",
+                "",
+                `${plant?.common_name || "Bitki"} — ${item.title}`
+            );
+
+            block.append(name);
+
+            addDetailText(
+                block,
+                "Geleneksel kullanım bilgisi",
+                item.intended_use
+            );
+
+            addDetailText(
+                block,
+                "Hazırlama yöntemi",
+                item.method
+            );
+
+            addDetailText(
+                block,
+                "Güvenlik notları",
+                item.safety_notes
+            );
+
+            if (plant) {
+
+                const plantButton = createElement(
+                    "button",
+                    "text-button",
+                    "Bitki ayrıntılarını görüntüle →"
+                );
+
+                plantButton.type = "button";
+
+                plantButton.addEventListener("click", () => {
+                    showPlantDetails(plant);
+                });
+
+                block.append(plantButton);
+
+            }
+
+            content.append(block);
+
+        });
+
+    } else {
+
+        addDetailText(
+            content,
+            "İlişkili kayıtlar",
+            "Bu konu için henüz hazırlama kaydı eklenmemiştir."
+        );
+
+    }
+
+    addBibliography(
+        content,
+        disease.bibliography
+    );
+
+    openDetailDialog();
+
+}
+
+
+/* =========================================
+   ARAMA SİSTEMİ
+========================================= */
+
+function searchPlants(query) {
+
+    const q = normalizeText(query);
+
+    return plants.filter(plant => {
+
+        const searchable = [
+
+            plant.common_name,
+            plant.scientific_name,
+            plant.description,
+            plant.short_description,
+            plant.origin,
+            ...(plant.alternative_names || []),
+            ...(plant.keywords || [])
+
+        ].join(" ");
+
+        return normalizeText(searchable).includes(q);
+
+    });
+
+}
+
+
+function searchDiseases(query) {
+
+    const q = normalizeText(query);
+
+    return diseases.filter(disease => {
+
+        const searchable = [
+
+            disease.name,
+            disease.description,
+            ...(disease.symptoms || []),
+            ...(disease.keywords || [])
+
+        ].join(" ");
+
+        return normalizeText(searchable).includes(q);
+
+    });
+
+}
+
+
+function searchPreparations(query) {
+
+    const q = normalizeText(query);
+
+    return preparations.filter(item => {
+
+        const searchable = [
+
+            item.title,
+            item.method,
+            item.intended_use,
+            item.ingredients,
+            item.safety_notes
+
+        ].join(" ");
+
+        return normalizeText(searchable).includes(q);
+
+    });
+
+}
+
+
+/* =========================================
+   ARAMA SONUÇLARI
+========================================= */
+
+function renderSearchResults(query) {
+
+    const results = $("#resultsGrid");
+
+    results.replaceChildren();
+
+    const plantResults = searchPlants(query);
+    const diseaseResults = searchDiseases(query);
+    const preparationResults = searchPreparations(query);
+
+    let total = 0;
+
+    plantResults.forEach(plant => {
+
+        const button = createSearchCard(
+            plant.common_name,
+            "Bitki",
+            plant.scientific_name,
+            () => showPlantDetails(plant)
+        );
+
+        results.append(button);
+
+        total++;
+
+    });
+
+
+    diseaseResults.forEach(disease => {
+
+        const button = createSearchCard(
+            disease.name,
+            "Rahatsızlık",
+            disease.description,
+            () => showDiseaseDetails(disease)
+        );
+
+        results.append(button);
+
+        total++;
+
+    });
+
+
+    preparationResults.forEach(item => {
+
+        const plant = plants.find(
+            p => p.id === item.plant_id
+        );
+
+        const disease = diseases.find(
+            d => d.id === item.disease_id
+        );
+
+        const subtitle = [
+            plant?.common_name,
+            disease?.name
+        ].filter(Boolean).join(" · ");
+
+        const button = createSearchCard(
+            item.title,
+            "Hazırlama",
+            subtitle,
+            () => {
+                if (disease) {
+                    showDiseaseDetails(disease);
+                } else if (plant) {
+                    showPlantDetails(plant);
+                }
+            }
+        );
+
+        results.append(button);
+
+        total++;
+
+    });
+
+    $("#searchResults").classList.remove("hidden");
+
+    $("#noResults").classList.toggle(
+        "hidden",
+        total > 0
+    );
+
+    $("#searchResults").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+function createSearchCard(title, type, subtitle, callback) {
+
+    const button = createElement(
+        "button",
+        "topic-item"
+    );
+
+    button.type = "button";
+
+    const left = document.createElement("span");
+
+    const name = createElement("strong", "", title);
+
+    const description = createElement(
+        "small",
+        "",
+        ` · ${type} · ${subtitle || ""}`
+    );
+
+    left.append(name, description);
+
+    const arrow = createElement(
         "span",
-        disease.category ?? "Belirti",
-        "tag"
+        "",
+        "→"
     );
 
-    addText(card, "h3", disease.name);
-    addText(card, "p", disease.description);
+    button.append(left, arrow);
 
-    addList(card, "Belirtiler", disease.symptoms);
+    button.addEventListener("click", callback);
 
-    const relatedPlants = (disease.plant_ids ?? [])
-        .map(getPlant)
-        .filter(Boolean);
+    return button;
 
-    if (relatedPlants.length > 0) {
-        addText(card, "h4", "İlişkili bitkiler");
-
-        relatedPlants.forEach(plant => {
-            shownPlantIds.add(plant.plant_id);
-
-            renderPlant(card, plant);
-        });
-    }
-
-    if (disease.medical_warning) {
-        addText(
-            card,
-            "p",
-            `Sağlık uyarısı: ${disease.medical_warning}`,
-            "warning"
-        );
-    }
-
-    renderSources(card, disease.sources);
-
-    resultsContainer.appendChild(card);
 }
 
-// ==========================================
-// BAĞIMSIZ HAZIRLAMA KARTI
-// ==========================================
 
-function renderStandalonePreparation(preparation) {
-    const card = document.createElement("article");
-    card.className = "result-card";
+/* =========================================
+   OLAYLAR
+========================================= */
 
-    addText(card, "span", "Hazırlama yöntemi", "tag");
-    addText(card, "h3", preparation.title);
+$("#searchForm").addEventListener("submit", event => {
 
-    const plant = getPlantById(preparation.plant_id);
-
-    if (plant) {
-        addText(
-            card,
-            "p",
-            `İlişkili bitki: ${plant.common_name}`
-        );
-    }
-
-    renderPreparation(card, preparation);
-
-    resultsContainer.appendChild(card);
-}
-
-// ==========================================
-// ARAMA METNİ OLUŞTURMA
-// ==========================================
-
-function createDiseaseSearchText(disease) {
-    return normalizeText([
-        disease.name,
-        disease.category,
-        disease.description,
-        ...(disease.symptoms ?? []),
-        ...(disease.keywords ?? [])
-    ].join(" "));
-}
-
-function createPlantSearchText(plant) {
-    return normalizeText([
-        plant.common_name,
-        plant.scientific_name,
-        plant.description,
-        plant.origin,
-        ...(plant.alternative_names ?? []),
-        ...(plant.plant_parts ?? []),
-        ...(plant.traditional_uses ?? []),
-        ...(plant.keywords ?? [])
-    ].join(" "));
-}
-
-function createPreparationSearchText(preparation) {
-    return normalizeText([
-        preparation.title,
-        preparation.method_name,
-        preparation.intended_use,
-        ...(preparation.keywords ?? []),
-        ...(preparation.safety_notes ?? [])
-    ].join(" "));
-}
-
-// ==========================================
-// ARAMA SİSTEMİ
-// ==========================================
-
-function searchData(query) {
-    if (!dataLoaded) {
-        showMessage(
-            "Veriler henüz yüklenmedi. Lütfen tekrar deneyin."
-        );
-        return;
-    }
-
-    const term = normalizeText(query);
-
-    if (!term) {
-        showMessage(
-            "Lütfen aramak istediğiniz ifadeyi yazın."
-        );
-        searchInput.focus();
-        return;
-    }
-
-    resultsContainer.replaceChildren();
-    resultsContainer.setAttribute("aria-busy", "false");
-
-    // Hastalık eşleşmeleri
-    const matchingDiseases = diseases.filter(disease =>
-        createDiseaseSearchText(disease).includes(term)
-    );
-
-    // Bitki eşleşmeleri
-    const matchingPlants = plants.filter(plant =>
-        createPlantSearchText(plant).includes(term)
-    );
-
-    // Hazırlama eşleşmeleri
-    const matchingPreparations = preparations.filter(preparation =>
-        createPreparationSearchText(preparation).includes(term)
-    );
-
-    const shownPlantIds = new Set();
-    const shownPreparationIds = new Set();
-
-    // 1. Hastalık sonuçları
-    matchingDiseases.forEach(disease => {
-        renderDisease(disease, shownPlantIds);
-
-        (disease.plant_ids ?? []).forEach(id => {
-            shownPreparationIds.add(id);
-        });
-    });
-
-    // 2. Bağımsız bitki sonuçları
-    matchingPlants.forEach(plant => {
-        if (shownPlantIds.has(plant.plant_id)) {
-            return;
-        }
-
-        const card = document.createElement("article");
-        card.className = "result-card";
-
-        renderPlant(card, plant);
-
-        resultsContainer.appendChild(card);
-        shownPlantIds.add(plant.plant_id);
-    });
-
-    // 3. Bağımsız hazırlama sonuçları
-    const displayedPreparations = new Set();
-
-    matchingPreparations.forEach(preparation => {
-        if (displayedPreparations.has(preparation.preparation_id)) {
-            return;
-        }
-
-        displayedPreparations.add(preparation.preparation_id);
-
-        // Bitki kartı zaten gösterilmişse hazırlama yöntemi
-        // o kartın içinde de bulunabilir. Yalnızca arama
-        // eşleşmesinde bağımsız gösterim yapıyoruz.
-        if (!shownPlantIds.has(preparation.plant_id)) {
-            renderStandalonePreparation(preparation);
-        }
-    });
-
-    // Toplam sonuç sayısı
-    const total =
-        matchingDiseases.length +
-        matchingPlants.filter(
-            plant => !matchingDiseases.some(
-                disease => (disease.plant_ids ?? []).includes(plant.plant_id)
-            )
-        ).length +
-        matchingPreparations.filter(
-            preparation => !shownPlantIds.has(preparation.plant_id)
-        ).length;
-
-    resultCount.textContent = `${total} sonuç`;
-
-    if (resultsContainer.children.length === 0) {
-        showMessage(
-            "Eşleşen bir kayıt bulunamadı. Farklı bir kelime deneyin."
-        );
-    }
-}
-
-// ==========================================
-// FORM OLAYLARI
-// ==========================================
-
-searchForm.addEventListener("submit", event => {
     event.preventDefault();
-    searchData(searchInput.value);
+
+    const query = $("#searchInput").value.trim();
+
+    if (!query) {
+        $("#searchInput").focus();
+        return;
+    }
+
+    renderSearchResults(query);
+
 });
 
-// ==========================================
-// BAŞLAT
-// ==========================================
+
+$("#clearSearch").addEventListener("click", () => {
+
+    $("#searchInput").value = "";
+
+    $("#searchResults").classList.add("hidden");
+
+    $("#searchInput").focus();
+
+});
+
+
+$("#closeDialog").addEventListener("click", () => {
+
+    $("#detailDialog").close();
+
+});
+
+
+$("#detailDialog").addEventListener("click", event => {
+
+    if (event.target === $("#detailDialog")) {
+        $("#detailDialog").close();
+    }
+
+});
+
+
+/* =========================================
+   SAYFA BAŞLATMA
+========================================= */
+
+$("#currentYear").textContent = new Date().getFullYear();
 
 loadData();
